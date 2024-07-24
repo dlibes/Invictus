@@ -1,13 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
+const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/chat', async (req, res) => {
     const userMessage = req.body.message;
+
+    console.log('Received message:', userMessage);
 
     try {
         const response = await axios.post('https://api.openai.com/v1/chat/completions', {
@@ -19,6 +23,8 @@ app.post('/chat', async (req, res) => {
                 'Content-Type': 'application/json'
             }
         });
+
+        console.log('OpenAI response:', response.data);
 
         const gptResponse = response.data.choices[0].message.content;
         res.json({ reply: gptResponse });
